@@ -14,23 +14,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout code
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # 2. Configure AWS credentials (OIDC)
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::260476742932:role/github-dev-deploy
           aws-region: us-east-1
 
+      # 3. Verify AWS identity
       - name: Verify AWS identity
         run: aws sts get-caller-identity
 
+      # 4. Install Terraform (🔥 THIS WAS MISSING)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      # 5. Terraform Init
       - name: Terraform Init
         run: |
           cd infra
           terraform init
 
+      # 6. Terraform Apply
       - name: Terraform Apply
         run: |
           cd infra
